@@ -17,6 +17,7 @@ import (
 )
 
 var httpFlag = flag.String("http", ":8080", "Serve HTTP at given address")
+var hostFlag = flag.String("host", "pkg.shao.in", "Serve HTTP at given host")
 var httpsFlag = flag.String("https", "", "Serve HTTPS at given address")
 var certFlag = flag.String("cert", "", "Use the provided TLS certificate")
 var keyFlag = flag.String("key", "", "Use the provided TLS key")
@@ -131,9 +132,9 @@ func (repo *Repo) GopkgVersionRoot(version Version) string {
 	v := version.String()
 
 	if repo.User == "" {
-		return "pkg.shao.in/" + repo.Name + "." + v
+		return *hostFlag + "/" + repo.Name + "." + v
 	} else {
-		return "pkg.shao.in/" + repo.User + "/" + repo.Name + "." + v
+		return *hostFlag + "/" + repo.User + "/" + repo.Name + "." + v
 	}
 }
 
@@ -149,7 +150,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	log.Printf("%s requested %s", req.RemoteAddr, req.URL)
 
 	if req.URL.Path == "/" {
-		resp.Write([]byte("pkg.shao.in/xxxx/xxx"))
+		resp.Write([]byte(*hostFlag + "/xxxx/xxx"))
 		return
 	}
 
@@ -158,7 +159,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	if m == nil {
 		m = patternOld.FindStringSubmatch(req.URL.Path)
 		if m == nil {
-			sendNotFound(resp, "Unsupported URL pattern; see the documentation at pkg.shao.in for details.")
+			sendNotFound(resp, "Unsupported URL pattern; see the documentation at "+*hostFlag+" for details.")
 			return
 		}
 		// "/v2/name" <= "/name.v2"
@@ -167,7 +168,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if strings.Contains(m[3], ".") {
-		sendNotFound(resp, "Import paths take the major version only (.%s instead of .%s); see docs at pkg.shao.in for the reasoning.",
+		sendNotFound(resp, "Import paths take the major version only (.%s instead of .%s); see docs at "+*hostFlag+" for the reasoning.",
 			m[3][:strings.Index(m[3], ".")], m[3])
 		return
 	}
