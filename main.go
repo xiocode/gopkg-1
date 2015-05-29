@@ -113,17 +113,17 @@ func (repo *Repo) GitHubTree() string {
 	return repo.FullVersion.String()
 }
 
-// GopkgRoot returns the package root at gopkg.in, without a schema.
+// GopkgRoot returns the package root at pkg.shao.in, without a schema.
 func (repo *Repo) GopkgRoot() string {
 	return repo.GopkgVersionRoot(repo.MajorVersion)
 }
 
-// GopkgPath returns the package path at gopkg.in, without a schema.
+// GopkgPath returns the package path at pkg.shao.in, without a schema.
 func (repo *Repo) GopkgPath() string {
 	return repo.GopkgVersionRoot(repo.MajorVersion) + repo.SubPath
 }
 
-// GopkgVersionRoot returns the package root in gopkg.in for the
+// GopkgVersionRoot returns the package root in pkg.shao.in for the
 // provided version, without a schema.
 func (repo *Repo) GopkgVersionRoot(version Version) string {
 	version.Minor = -1
@@ -149,8 +149,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	log.Printf("%s requested %s", req.RemoteAddr, req.URL)
 
 	if req.URL.Path == "/" {
-		resp.Header().Set("Location", "http://pkg.shao.in")
-		resp.WriteHeader(http.StatusTemporaryRedirect)
+		resp.Write([]byte("pkg.shao.in/xxxx/xxx"))
 		return
 	}
 
