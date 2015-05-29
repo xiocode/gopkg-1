@@ -77,12 +77,12 @@ type Repo struct {
 
 	// FullVersion is the best version in AllVersions that matches MajorVersion.
 	// It defaults to InvalidVersion if there are no matches.
-	FullVersion    Version
+	FullVersion Version
 
 	// AllVersions holds all versions currently available in the repository,
 	// either coming from branch names or from tag names. Version zero (v0)
 	// is only present in the list if it really exists in the repository.
-	AllVersions    VersionList
+	AllVersions VersionList
 }
 
 // SetVersions records in the relevant fields the details about which
@@ -99,7 +99,7 @@ func (repo *Repo) SetVersions(all []Version) {
 // GitHubRoot returns the repository root at GitHub, without a schema.
 func (repo *Repo) GitHubRoot() string {
 	if repo.User == "" {
-		return "github.com/go-" + repo.Name + "/" + repo.Name
+		return "github.com/going/" + repo.Name
 	} else {
 		return "github.com/" + repo.User + "/" + repo.Name
 	}
@@ -129,18 +129,11 @@ func (repo *Repo) GopkgVersionRoot(version Version) string {
 	version.Minor = -1
 	version.Patch = -1
 	v := version.String()
-	if repo.OldFormat {
-		if repo.User == "" {
-			return "gopkg.in/" + v + "/" + repo.Name
-		} else {
-			return "gopkg.in/" + repo.User + "/" + v + "/" + repo.Name
-		}
+
+	if repo.User == "" {
+		return "pkg.shao.in/" + repo.Name + "." + v
 	} else {
-		if repo.User == "" {
-			return "gopkg.in/" + repo.Name + "." + v
-		} else {
-			return "gopkg.in/" + repo.User + "/" + repo.Name + "." + v
-		}
+		return "pkg.shao.in/" + repo.User + "/" + repo.Name + "." + v
 	}
 }
 
@@ -156,7 +149,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	log.Printf("%s requested %s", req.RemoteAddr, req.URL)
 
 	if req.URL.Path == "/" {
-		resp.Header().Set("Location", "http://labix.org/gopkg.in")
+		resp.Header().Set("Location", "http://pkg.shao.in")
 		resp.WriteHeader(http.StatusTemporaryRedirect)
 		return
 	}
@@ -166,7 +159,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	if m == nil {
 		m = patternOld.FindStringSubmatch(req.URL.Path)
 		if m == nil {
-			sendNotFound(resp, "Unsupported URL pattern; see the documentation at gopkg.in for details.")
+			sendNotFound(resp, "Unsupported URL pattern; see the documentation at pkg.shao.in for details.")
 			return
 		}
 		// "/v2/name" <= "/name.v2"
@@ -175,7 +168,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if strings.Contains(m[3], ".") {
-		sendNotFound(resp, "Import paths take the major version only (.%s instead of .%s); see docs at gopkg.in for the reasoning.",
+		sendNotFound(resp, "Import paths take the major version only (.%s instead of .%s); see docs at pkg.shao.in for the reasoning.",
 			m[3][:strings.Index(m[3], ".")], m[3])
 		return
 	}

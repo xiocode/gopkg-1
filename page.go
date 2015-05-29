@@ -109,7 +109,7 @@ const packageTemplateString = `<!DOCTYPE html>
 	</head>
 	<body>
 		<script type="text/javascript">
-			// If there's a URL fragment, assume it's an attempt to read a specific documentation entry. 
+			// If there's a URL fragment, assume it's an attempt to read a specific documentation entry.
 			if (window.location.hash.length > 1) {
 				window.location = "http://godoc.org/{{.Repo.GopkgPath}}" + window.location.hash;
 			}
@@ -179,7 +179,7 @@ const packageTemplateString = `<!DOCTYPE html>
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-12">
-						<p class="text-muted credit"><a href="https://gopkg.in">gopkg.in<a></p>
+						<p class="text-muted credit"><a href="http://pkg.shao.in">pkg.shao.in<a></p>
 					</div>
 				</div>
 			</div>
@@ -298,7 +298,6 @@ func renderPackagePage(resp http.ResponseWriter, req *http.Request, repo *Repo) 
 		}
 		gotResp <- true
 	}()
-
 
 	r := 0
 	for r < wantResps {
